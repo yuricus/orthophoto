@@ -1,0 +1,4 @@
+opencv-contrib-python==4.5.5.64
+numpy==1.21.6
+tqdm==4.64.1
+PyQt5==5.15.9
