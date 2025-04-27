@@ -23,7 +23,7 @@ class OrthophotoGenerator:
         for path in tqdm(img_paths, desc="Загрузка изображений"):
             img = cv2.imread(path)
             if img is not None:
-                # Приведение к стандартному размеру для обработки
+
                 h, w = img.shape[:2]
                 if w > 2000 or h > 2000:
                     img = cv2.resize(img, (int(w * 0.5), int(h * 0.5)),
@@ -44,7 +44,7 @@ class OrthophotoGenerator:
 
         matches = self.matcher.knnMatch(des1, des2, k=2)
 
-        # Фильтрация по Lowe's ratio test
+
         good = []
         for m, n in matches:
             if m.distance < 0.75 * n.distance:
@@ -65,7 +65,7 @@ class OrthophotoGenerator:
 
         print("Начинаем процесс сшивания...")
 
-        # Вариант 1: Использование встроенного Stitcher (SCANS mode)
+
         status, result = self.stitcher.stitch(images)
 
         if status == cv2.Stitcher_OK:
@@ -91,11 +91,11 @@ class OrthophotoGenerator:
                 print(f"Не удалось найти гомографию для изображения {i + 1}")
                 continue
 
-            # Применяем трансформацию
+
             h, w = base_img.shape[:2]
             warped = cv2.warpPerspective(images[i], H, (w * 2, h * 2))
 
-            # Смешивание изображений
+
             mask = np.zeros((h * 2, w * 2), dtype=np.uint8)
             cv2.fillConvexPoly(mask, np.int32(dst_pts * 2), 255)
 
@@ -107,7 +107,7 @@ class OrthophotoGenerator:
                 cv2.NORMAL_CLONE
             )
 
-            # Обрезка черных областей
+
             gray = cv2.cvtColor(base_img, cv2.COLOR_BGR2GRAY)
             _, thresh = cv2.threshold(gray, 1, 255, cv2.THRESH_BINARY)
             contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -118,30 +118,30 @@ class OrthophotoGenerator:
 
 
 if __name__ == "__main__":
-    # Настройки
-    input_folder = "D:\\4thAve"  # Папка с изображениями
+  
+    input_folder = "D:\\4thAve"
     output_path = "D:\\4thAve\\orthophoto_result.jpg"
 
-    # Отключаем OpenCL для избежания ошибок
+
     cv2.ocl.setUseOpenCL(False)
 
-    # Создаем генератор
+
     generator = OrthophotoGenerator()
 
-    # Загружаем изображения
+
     images = generator.load_images(input_folder)
 
     if len(images) < 2:
         print("Недостаточно изображений для обработки")
     else:
-        # Создаем ортофотоплан
+
         result = generator.create_orthophoto(images)
 
-        # Сохраняем результат
+
         cv2.imwrite(output_path, result)
         print(f"Ортофотоплан сохранен в {output_path}")
 
-        # Показываем результат
+
         cv2.imshow("Orthophoto", cv2.resize(result, (1000, 600)))
         cv2.waitKey(0)
         cv2.destroyAllWindows()
