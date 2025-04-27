@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 class OrthophotoGenerator:
     def __init__(self):
-        # Инициализация детектора SIFT и матчера
+     
         self.sift = cv2.SIFT_create()
         self.matcher = cv2.BFMatcher(cv2.NORM_L2)
         self.stitcher = cv2.Stitcher_create(cv2.Stitcher_SCANS)
