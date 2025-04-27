@@ -65,6 +65,7 @@ class OrthophotoGenerator:
 
         print("Начинаем процесс сшивания...")
 
+        return self.manual_stitching(images)
 
         status, result = self.stitcher.stitch(images)
 
@@ -119,7 +120,7 @@ class OrthophotoGenerator:
 if __name__ == "__main__":
   
     input_folder = ".\\4thAve"
-    output_path = ".\\4thAve\\orthophoto_result.jpg"
+    output_path = ".\\4thAve\\result\\orthophoto_result.jpg"
 
 
     cv2.ocl.setUseOpenCL(False)
